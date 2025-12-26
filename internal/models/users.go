@@ -17,5 +17,5 @@ type User struct {
 type CreateUserRequest struct {
 	Username string `json:"username" db:"username" validate:"required,min=6,max=32"`
 	Email string `json:"email" db:"email" validate:"required,email"`
-	PasswordHash string `json:"hash" db:"password_hash" validate:"required,min=8"`
+	PasswordHash string `json:"password_hash" db:"password_hash" validate:"required,min=8"`
 }

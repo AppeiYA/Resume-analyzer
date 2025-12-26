@@ -27,6 +27,12 @@ const (
 	SELECT * FROM users 
 	WHERE email = $1
 	`
+	CHECKUSERNAME=`
+	SELECT EXISTS (
+		SELECT 1 FROM users
+		WHERE username = $1
+	)
+	`
 )
 
 func (r *UserRepository) CreateUser(ctx context.Context, payload *models.CreateUserRequest) error {
@@ -51,5 +57,15 @@ func (r *UserRepository) GetUserByEmail(ctx context.Context, email string) (*mod
 		log.Println("Db error: ", err)
 		return nil, apperrors.NewInternalServerError()
 	}
+}
+
+func (r *UserRepository) IsUsernameTaken(ctx context.Context, username string) (bool, error) {
+	err := r.db.GetContext(ctx, CHECKUSERNAME, username)
+	if err != nil {
+		log.Println("Db Error ", err)
+		return false, apperrors.NewInternalServerError()
+	}
+
+	return false, nil
 }
 

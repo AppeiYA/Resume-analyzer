@@ -23,6 +23,15 @@ func (s *AuthService) CreateUser(ctx context.Context, payload *models.CreateUser
 	if err == nil {
 		return apperrors.NewResourceAlreadyExistsError("user")
 	}
+
+	// check if username is taken
+	isTaken, takenErr := s.usersRepo.IsUsernameTaken(ctx, payload.Username)
+	if takenErr != nil {
+		return takenErr
+	}
+	if isTaken {
+		return apperrors.NewResourceAlreadyExistsError("username")
+	}
 	// hash password
 	hash, err := utils.HashPassword(payload.PasswordHash)
 	if err != nil {
